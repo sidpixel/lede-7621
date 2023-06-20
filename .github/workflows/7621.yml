@@ -7,12 +7,7 @@
 #=================================================
 name: 7621.yml
 on:
-  release:
-  repository_dispatch:
-    types: published
   push:
-    branches:
-      - main
     paths:
       - '.config'
       - '.github/workflows/7621.yml'
