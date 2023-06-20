@@ -19,3 +19,6 @@ git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/lea
 git clone https://github.com/tty228/luci-app-serverchan.git package/lean/luci-app-serverchan
 #git clone https://github.com/jerrykuku/node-request.git package/lean/node-request
 #git clone https://github.com/jerrykuku/luci-app-jd-dailybonus.git package/lean/luci-app-jd-dailybonus
+
+#定义时间变量
+echo "FILE_DATE=$(date +%Y%m%d%H%M)" >>"$GITHUB_ENV"
