@@ -31,6 +31,8 @@ env:
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
+  TZ: Asia/Shanghai
+
 
 jobs:
   build:
@@ -44,7 +46,6 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
 
-        TZ: Asia/Shanghai
 
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
