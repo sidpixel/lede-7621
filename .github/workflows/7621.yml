@@ -5,13 +5,10 @@
 # Author: P3TERX
 # Blog: https://p3terx.com
 #=================================================
-
 name: 7621.yml
-
 on:
   release:
   types: published
-  
   push:
     branches:
       - main
