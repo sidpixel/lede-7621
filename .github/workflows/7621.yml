@@ -33,7 +33,7 @@ env:
 
 jobs:
   build:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest, self-hosted]
+    runs-on: [self-hosted, ubuntu-latest, windows-latest, macos-latest]
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
