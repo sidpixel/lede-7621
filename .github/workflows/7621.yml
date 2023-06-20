@@ -15,8 +15,7 @@ on:
   push:
     branches:
       - master
-    paths:
-      - '.github/workflows/7621.yml
+
   schedule:
     - cron: 36 11 * * *
   watch:
