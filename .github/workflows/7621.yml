@@ -9,6 +9,9 @@
 name: 7621.yml
 
 on:
+  release:
+  types: published
+  
   push:
     branches:
       - main
