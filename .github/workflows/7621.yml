@@ -19,7 +19,7 @@ on:
       - '.github/workflows/7621.yaml'
 
   schedule:
-    - cron: 51 11 * * *
+    - cron: 21 12 * * *
   watch:
     types: started
 
