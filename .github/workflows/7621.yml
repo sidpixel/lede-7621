@@ -16,6 +16,7 @@ on:
     branches:
       - master
     paths:
+      - '.config'
       - '.github/workflows/7621.yaml'
 
   schedule:
