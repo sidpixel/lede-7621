@@ -1,4 +1,4 @@
-#=================================================
+7621#=================================================
 # https://github.com/P3TERX/Actions-OpenWrt
 # Description: Build OpenWrt using GitHub Actions
 # Lisence: MIT
@@ -18,7 +18,7 @@ on:
     paths:
      - ''
   schedule:
-    - cron: 31 11 * * *
+    - cron: 36 11 * * *
   watch:
     types: started
 
