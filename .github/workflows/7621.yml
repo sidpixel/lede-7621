@@ -5,36 +5,25 @@
 # Author: P3TERX
 # Blog: https://p3terx.com
 #=================================================
-name: 7621.yml
+
+name: newifi7621.yml
+
 on:
+  release:
+    types: [published]
   push:
+    branches: 
+      - main
     paths:
-      - '.config'
+      - 'wrt7621.config'
       - '.github/workflows/7621.yml'
 
   schedule:
     - cron: 21 12 * * */5
-  watch:
-    types: started
-
-env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
-  SSH_ACTIONS: false
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: false
-  UPLOAD_WETRANSFER: false
-  TZ: Asia/Shanghai
 
 jobs:
   build:
-    runs-on: [self-hosted, ubuntu-latest, windows-latest, macos-latest]
-    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout
@@ -43,6 +32,19 @@ jobs:
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
+        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_BRANCH: master
+        FEEDS_CONF: feeds.conf.default
+        CONFIG_FILE: .config
+        DIY_P1_SH: diy-part1.sh
+        DIY_P2_SH: diy-part2.sh
+        SSH_ACTIONS: false
+        UPLOAD_BIN_DIR: false
+        UPLOAD_FIRMWARE: true
+        UPLOAD_COWTRANSFER: false
+        UPLOAD_WETRANSFER: false
+        TZ: Asia/Shanghai
+
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
@@ -131,6 +133,14 @@ jobs:
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
+        
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: wrt7621${{ env.FILE_DATE }}
+        files: |
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2.manifest
 
     - name: Upload firmware to cowtransfer
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
