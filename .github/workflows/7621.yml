@@ -9,15 +9,15 @@
 name: 7621.yml
 
 on:
-  release:
-    types: published
   push:
     branches:
-      - master
+      - main
     paths:
       - '.config'
       - '.github/workflows/7621.yml'
   repository_dispatch:
+  release:
+  types: published
 
   schedule:
     - cron: 21 12 * * */5
