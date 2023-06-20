@@ -9,7 +9,6 @@
 name: 7621.yml
 
 on:
-  repository_dispatch:
   release:
     types: published
   push:
@@ -18,6 +17,7 @@ on:
     paths:
       - '.config'
       - '.github/workflows/7621.yaml'
+  repository_dispatch:
 
   schedule:
     - cron: 21 12 * * *
