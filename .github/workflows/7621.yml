@@ -16,7 +16,6 @@ on:
     branches:
       - master
     paths:
-      - '.config'
       - '.github/workflows/7621.yml
   schedule:
     - cron: 36 11 * * *
