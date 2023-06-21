@@ -26,13 +26,9 @@ env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 8632.config
   OS_ARCH: X86_32
-  FIRM_PATH: openwrt/bin/targets/x86/generic
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  SSH_ACTIONS: false
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: true
-  TZ: Asia/Shanghai
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -57,11 +53,9 @@ jobs:
         sudo chown $USER:$GROUPS /workdir
 
     - name: Clone source code
-      working-directory: /workdir
       run: |
         df -hT $PWD
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
     - name: Load custom feeds
       run: |
@@ -89,10 +83,11 @@ jobs:
       run: |
         cd openwrt
         make defconfig
-        make download -j8
+        make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-
+        
+    
     - name: Compile the firmware
       id: compile
       run: |
@@ -103,7 +98,7 @@ jobs:
     - name: Check space usage
       if: (!cancelled())
       run: df -hT
-
+      
     - name: Organize files
       id: organize
       run: |
@@ -113,7 +108,7 @@ jobs:
     - name: Upload firmware directory
       uses: actions/upload-artifact@master
       with:
-        name: ${{ OS_ARCH }}
+        name: openwrt-firmware
         path: openwrt/bin/targets
         
     - name: Release
@@ -121,7 +116,7 @@ jobs:
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
         files: |
-          ${{ FIRM_PATH }}/openwrt-x86-generic-generic-squashfs-combined-efi.img.gz
-          ${{ FIRM_PATH }}/openwrt-x86-generic-generic-squashfs-rootfs.img.gz
-          ${{ FIRM_PATH }}/openwrt-x86-generic-generic.manifest
+          openwrt/bin/targets/x86/generic/openwrt-x86-generic-generic-squashfs-combined-efi.img.gz
+          openwrt/bin/targets/x86/generic/openwrt-x86-generic-generic-squashfs-rootfs.img.gz
+          openwrt/bin/targets/x86/generic/openwrt-x86-generic-generic.manifest
 
