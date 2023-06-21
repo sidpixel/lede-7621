@@ -126,7 +126,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: openwrt-firmware
-        path: openwrt/bin/targets
+        path: openwrt/bin/targets/x86/generic
         
     - name: Release
       uses: softprops/action-gh-release@v1
