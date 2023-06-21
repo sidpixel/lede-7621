@@ -128,7 +128,7 @@ jobs:
     - name: Upload firmware directory
       uses: actions/upload-artifact@master
       with:
-        name: ${{ OS_ARCH }}
+        name: openwrt-firmware
         path: openwrt/bin/targets
         
     - name: Release
