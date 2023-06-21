@@ -18,8 +18,8 @@ on:
       - '7621.config'
       - '.github/workflows/7621.yml'
 
-#  schedule:
-#    - cron: 21 12 * * */5
+  schedule:
+    - cron: 21 12 * */2 *
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
@@ -133,7 +133,6 @@ jobs:
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
         files: |
-          openwrt/bin/targets/ramips/mt7621/openwrt-x86-generic-generic-squashfs-combined-efi.img.gz
-          openwrt/bin/targets/ramips/mt7621/openwrt-x86-generic-generic-squashfs-rootfs.img.gz
-          openwrt/bin/targets/ramips/mt7621/openwrt-x86-generic-generic.manifest
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2.manifest
 
