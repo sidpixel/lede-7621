@@ -26,6 +26,7 @@ env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 8632.config
   OS_ARCH: X86_32
+  FIRM_PATH: openwrt/bin/targets/x86/generic
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   SSH_ACTIONS: false
@@ -112,7 +113,7 @@ jobs:
     - name: Upload firmware directory
       uses: actions/upload-artifact@master
       with:
-        name: OpenWrt-x86-32
+        name: ${{ OS_ARCH }}
         path: openwrt/bin/targets
         
     - name: Release
@@ -120,7 +121,7 @@ jobs:
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
         files: |
-          openwrt/bin/targets/x86/generic/openwrt-x86-generic-generic-squashfs-combined-efi.img.gz
-          openwrt/bin/targets/x86/generic/openwrt-x86-generic-generic-squashfs-rootfs.img.gz
-          openwrt/bin/targets/x86/generic/openwrt-x86-generic-generic.manifest
+          ${{ FIRM_PATH }}/openwrt-x86-generic-generic-squashfs-combined-efi.img.gz
+          ${{ FIRM_PATH }}/openwrt-x86-generic-generic-squashfs-rootfs.img.gz
+          ${{ FIRM_PATH }}/openwrt-x86-generic-generic.manifest
 
