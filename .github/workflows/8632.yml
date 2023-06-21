@@ -18,8 +18,8 @@ on:
       - '8632.config'
       - '.github/workflows/8632.yml'
 
-#  schedule:
-#    - cron: 21 12 * * */5
+  schedule:
+    - cron: 21 2 * */3 *
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
