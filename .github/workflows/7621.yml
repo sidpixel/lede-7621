@@ -26,11 +26,8 @@ env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 7621.config
   OS_ARCH: 7621
-  FIRM_PATH: openwrt/bin/targets/ramips/mt7621/
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  TZ: Asia/Shanghai
-
 
 jobs:
   build:
@@ -103,7 +100,7 @@ jobs:
       run: |
         cd openwrt
         make defconfig
-        make download -j8
+        make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
         
