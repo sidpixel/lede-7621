@@ -19,7 +19,7 @@ on:
       - '.github/workflows/7621.yml'
 
   schedule:
-    - cron: 21 1 * */2 *
+    - cron: 21 1 15 */3 *
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
