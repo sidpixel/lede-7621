@@ -112,6 +112,8 @@ jobs:
         echo -e "$(nproc) thread compile"
         make -j$(nproc) V=s
 
+     #   make -j$(nproc) V=s
+
     - name: Check space usage
       if: (!cancelled())
       run: df -hT
