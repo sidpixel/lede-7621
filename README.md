@@ -16,7 +16,7 @@
 Compile Openwrt firmware using GitHub Actions cloud
 
 - x86_32/x86_64/Newifi-D2 firmware, SSRPlus+, Passwall, SmartDNS, PPTP server, AdGuardHome
-- Username: root Password: password Management IP: 10.1.1.1
+- Login info.username: "root" Password: "password" Management IP: 10.1.1.1
 - This firmware is for my own use and is automatically compiled once a month.
 
 
