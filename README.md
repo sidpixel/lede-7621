@@ -1,17 +1,17 @@
-OpenWrt-Actions(https://github.com/sidpixel/lede)
+## OpenWrt-Actions(https://github.com/sidpixel/lede)
 
 [![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square&label=LICENSE)](https://github.com/sidpixel/lede/blob/master/LICENSE)
 ![GitHub Stars](https://img.shields.io/github/stars/sidpixel/lede.svg?style=flat-square&label=Stars&logo=github)
 ![GitHub Forks](https://img.shields.io/github/forks/sidpixel/lede.svg?style=flat-square&label=Forks&logo=github)
 
-Usage 
+## Usage 
 
 - Create a new repository.
 - Automatic compilation, the progress can be viewed on the Actions page.
 - After compiling, click the `Artifacts` button in the upper right corner of the Actions page to download the firmware zip file.
 
 
-Tips
+## Tips
 
 Compile Openwrt firmware using GitHub Actions cloud
 
@@ -20,9 +20,8 @@ Compile Openwrt firmware using GitHub Actions cloud
 - This firmware is for my own use and is automatically compiled once a month.
 
 
-Credits
+## Credits
 - [P3TERX/Actions-OpenWrt](https://github.com/P3TERX/Actions-OpenWrt)
-- [tty228微信推送](https://github.com/tty228/luci-app-serverchan)
 - [kenzok8](https://github.com/kenzok8)
 - [Microsoft](https://www.microsoft.com)
 - [Microsoft Azure](https://azure.microsoft.com)
@@ -38,6 +37,6 @@ Credits
 - [WeTransfer](https://wetransfer.com/)
 - [Mikubill/transfer](https://github.com/Mikubill/transfer)
 
-##  License
+## License
 
-[MIT](https://github.com/sidpixel/lede/blob/main/LICENSE) ©[**sidpixel**]
+[MIT](https://github.com/sidpixel/lede/blob/main/LICENSE) © [**sidpixel**]
