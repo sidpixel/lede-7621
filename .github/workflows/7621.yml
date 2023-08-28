@@ -1,9 +1,8 @@
 #=================================================
-# src_https://github.com/P3TERX/Actions-OpenWrt
+# https://github.com/sidpixel/lede
 # Description: Build OpenWrt using GitHub Actions
 # Lisence: MIT
 # Author: sidpixel
-# src_Blog: https://p3terx.com
 #=================================================
 
 name: newifi7621.yml
