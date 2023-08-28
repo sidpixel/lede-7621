@@ -1,4 +1,4 @@
-## OpenWrt-Actions(https://github.com/sidpixel/lede)
+## OpenWrt-Actions
 
 [![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square&label=LICENSE)](https://github.com/sidpixel/lede/blob/master/LICENSE)
 ![GitHub Stars](https://img.shields.io/github/stars/sidpixel/lede.svg?style=flat-square&label=Stars&logo=github)
