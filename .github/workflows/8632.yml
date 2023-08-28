@@ -1,9 +1,8 @@
 #=================================================
-# https://github.com/P3TERX/Actions-OpenWrt
+# https://github.com/sidpixel/lede
 # Description: Build OpenWrt using GitHub Actions
 # Lisence: MIT
-# Author: P3TERX
-# Blog: https://p3terx.com
+# Author: sidpixel
 #=================================================
 
 name: 8632.yml
@@ -112,7 +111,6 @@ jobs:
         echo -e "$(nproc) thread compile"
         make -j$(nproc) V=s
 
-     #   make -j$(nproc) V=s
 
     - name: Check space usage
       if: (!cancelled())
