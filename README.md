@@ -4,20 +4,17 @@
 ![GitHub Stars](https://img.shields.io/github/stars/sidpixel/lede.svg?style=flat-square&label=Stars&logo=github)
 ![GitHub Forks](https://img.shields.io/github/forks/sidpixel/lede.svg?style=flat-square&label=Forks&logo=github)
 
+
 ## Usage 
 
-- Create a new repository.
-- Automatic compilation, the progress can be viewed on the Actions page.
-- After compiling, click the `Artifacts` button in the upper right corner of the Actions page to download the firmware zip file.
-
+- Download the firmware installation for the Applicable platform
+- Login with "username: root Password: password" Management IP: 10.1.1.1
 
 ## Tips
 
-Compile Openwrt firmware using GitHub Actions cloud
-
 - x86_32/x86_64/Newifi-D2 firmware, SSRPlus+, Passwall, SmartDNS, PPTP server, AdGuardHome
-- Login info.username: "root" Password: "password" Management IP: 10.1.1.1
 - This firmware is for my own use and is automatically compiled once a month.
+
 
 
 ## Credits
