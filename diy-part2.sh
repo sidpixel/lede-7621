@@ -13,9 +13,9 @@ rm -rf package/lean/luci-theme-argon
 git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
 
 # 拉取微信推送插件
-git clone https://github.com/tty228/luci-app-serverchan.git package/lean/luci-app-serverchan
+git clone https://github.com/zzsj0928/luci-app-pushbot package/luci-app-pushbot
 # 拉取oaf流控插件
-git clone https://github.com/destan19/OpenAppFilter.git  package/OpenAppFilter
+git clone https://github.com/destan19/OpenAppFilter/tree/master/luci-app-oaf  package/luci-app-oaf
 
 #定义时间变量
 echo "FILE_DATE=$(date +%Y%m%d%H%M)" >>"$GITHUB_ENV"
