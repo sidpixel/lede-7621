@@ -42,7 +42,8 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-          sudo rm -rf  /etc/apt/sources.list.d/*
+          sudo swapoff /mnt/swapfile       
+          sudo rm -rf /etc/apt/sources.list.d/* /imagegeneration/installers /opt/az /opt/hostedtoolcache /opt/microsoft /opt/pipx /opt/googles /mnt/swapfile 
           sudo apt-get autoremove -y >/dev/null 2>&1
           sudo apt-get autoclean -y >/dev/null 2>&1
           sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
