@@ -1,7 +1,7 @@
 #=================================================
 # https://github.com/sidpixel/lede
 # Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
+# License: MIT
 # Author: sidpixel
 #=================================================
 
@@ -19,6 +19,7 @@ on:
 
   schedule:
     - cron: 21 2 1 */1 *
+
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
@@ -32,17 +33,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-
     steps:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name:  Space cleanup and Initialization environment
+    - name: Space cleanup and Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-          sudo swapoff /mnt/swapfile       
-          sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws*  /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium*  /usr/local/share/powershell*   >/dev/null 2>&1     
+          sudo swapoff /mnt/swapfile
+          sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* >/dev/null 2>&1
           docker rmi `docker images -q`
           sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
           sudo -E apt-mark hold grub-efi-amd64-signed
@@ -89,8 +89,7 @@ jobs:
         make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-        
-    
+
     - name: Compile the firmware
       id: compile
       run: |
@@ -106,41 +105,37 @@ jobs:
         du -h --max-depth=1 ./build_dir
         du -h --max-depth=1 ./bin
 
-      
-		- name: Prepare artifact
-			run: |
-				mkdir -p openwrt/artifact/package
-				mkdir -p openwrt/artifact/buildinfo
-				rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
-				cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
-				cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+    - name: Prepare artifact
+      run: |
+        mkdir -p openwrt/artifact/package
+        mkdir -p openwrt/artifact/buildinfo
+        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
+        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
+        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
 
-		
-		- name: Upload buildinfo
-			uses: actions/upload-artifact@v3
-			with:
-				name: OpenWrt_buildinfo
-				path: openwrt/artifact/buildinfo/
-		- name: Upload package
-			uses: actions/upload-artifact@v3
-			with:
-				name: OpenWrt_package
-				path: openwrt/artifact/package/
-		- name: Upload firmware
-			uses: actions/upload-artifact@v3
-			with:
-				name: OpenWrt_firmware
-				path: openwrt/bin/targets/
+    - name: Upload buildinfo
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenWrt_buildinfo
+        path: openwrt/artifact/buildinfo/
 
-		- name: Release
-			uses: softprops/action-gh-release@v1
-			with:
-				tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
-				files: |
-					openwrt/bin/targets/
-					openwrt/artifact/package/
-					openwrt/artifact/buildinfo/
+    - name: Upload package
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenWrt_package
+        path: openwrt/artifact/package/
 
+    - name: Upload firmware
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenWrt_firmware
+        path: openwrt/bin/targets/
 
-
-
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
+        files: |
+          openwrt/bin/targets/
+          openwrt/artifact/package/
+          openwrt/artifact/buildinfo/
