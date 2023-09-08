@@ -23,7 +23,7 @@ env:
  # REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_URL: https://github.com/Lienol/openwrt openwrt
  # REPO_BRANCH: master
-  REPO_BRANCH: 19.07
+  REPO_BRANCH: 23.05
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 7621.config
   OS_ARCH: 7621
@@ -32,7 +32,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout
