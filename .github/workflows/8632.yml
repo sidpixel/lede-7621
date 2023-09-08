@@ -15,6 +15,7 @@ on:
       - master
     paths:
       - '8632.config'
+      - 'diy-part2.sh'
       - '.github/workflows/8632.yml'
 
   schedule:
