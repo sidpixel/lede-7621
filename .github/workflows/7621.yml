@@ -21,7 +21,7 @@ on:
     - cron: 21 1 15 */1 *
 env:
  # REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_URL: https://github.com/Lienol/openwrt openwrt
+  REPO_URL: https://github.com/Lienol/openwrt
  # REPO_BRANCH: master
   REPO_BRANCH: 23.05
   FEEDS_CONF: feeds.conf.default
