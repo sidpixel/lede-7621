@@ -21,7 +21,7 @@ on:
     - cron: 21 1 15 */1 *
 env:
  # REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_URL: https://github.com/openwrt/openwrt openwrt
+  REPO_URL: https://github.com/Lienol/openwrt openwrt
  # REPO_BRANCH: master
   REPO_BRANCH: 19.07
   FEEDS_CONF: feeds.conf.default
@@ -32,7 +32,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-18.04
 
     steps:
     - name: Checkout
