@@ -41,7 +41,11 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-          sudo rm -rf  /etc/apt/sources.list.d/*
+          sudo swapoff /mnt/swapfile
+          sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
+          docker rmi `docker images -q`
+          sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
+          sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* snap*
           sudo apt-get autoremove -y >/dev/null 2>&1
           sudo apt-get autoclean -y >/dev/null 2>&1
           sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
