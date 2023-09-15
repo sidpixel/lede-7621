@@ -98,35 +98,34 @@ jobs:
 
     - name: Prepare artifact
       run: |
-        mkdir -p openwrt/artifact/package
-        mkdir -p openwrt/artifact/buildinfo
+        mkdir -p /tmp/package
+        mkdir -p /tmp/buildinfo
         rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") /tmp/package/
+        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") /tmp/buildinfo/
 
     - name: Upload buildinfo
       uses: actions/upload-artifact@v3
       with:
         name: OpenWrt_buildinfo
-        path: openwrt/artifact/buildinfo/
+        path: /tmp/buildinfo/
 
     - name: Upload package
       uses: actions/upload-artifact@v3
       with:
         name: OpenWrt_package
-        path: openwrt/artifact/package/
+        path: /tmp/package/
 
     - name: Upload firmware
       uses: actions/upload-artifact@v3
       with:
         name: OpenWrt_firmware
-        path: openwrt/bin/targets/
+        path: /tmp/buildinfo/
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
-        files: |
-          openwrt/bin/targets/
-          openwrt/artifact/package/
-          openwrt/artifact/buildinfo/
+        path: |
+          /tmp/buildinfo/
+          /tmp/package/
