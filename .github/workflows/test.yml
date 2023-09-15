@@ -16,6 +16,7 @@ on:
     paths:
       - 'test.config'
       - 'diy-part2.sh'
+      - 'diy-part1.sh'
       - '.github/workflows/test.yml'
 
   schedule:
