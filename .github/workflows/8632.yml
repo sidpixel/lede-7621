@@ -128,7 +128,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
-        files: |
-          openwrt/bin/targets/
-          openwrt/artifact/package/
-          openwrt/artifact/buildinfo/
+        path: openwrt/bin/targets/
