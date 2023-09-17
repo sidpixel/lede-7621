@@ -18,7 +18,7 @@ on:
       - '.github/workflows/7621_clash.yml'
 
   schedule:
-    - cron: 21 1 15 */1 *
+    - cron: 21 2 15 */1 *
 env:
   REPO_URL: https://github.com/Lienol/openwrt
   REPO_BRANCH: main
