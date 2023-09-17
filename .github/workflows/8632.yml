@@ -96,8 +96,8 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc)  V=s
-        
+        #make -j$(nproc)  V=s
+        make -j1 V=s
 
     - name: Prepare artifact
       run: |
