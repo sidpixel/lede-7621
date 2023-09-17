@@ -33,7 +33,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
@@ -102,9 +102,9 @@ jobs:
       run: |
         mkdir -p openwrt/artifact/package
         mkdir -p openwrt/artifact/buildinfo
-        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+        rm -rf $(find openwrt/bin/target/ -type d -name "packages")
+        cp -rf $(find openwrt/bin/package/ -type f -name "*.ipk") openwrt/artifact/package/
+        cp -rf $(find openwrt/bin/target/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
 
     - name: Upload buildinfo
       uses: actions/upload-artifact@v3
@@ -118,14 +118,8 @@ jobs:
         name: OpenWrt_package
         path: openwrt/artifact/package/
 
-    - name: Upload firmware
-      uses: actions/upload-artifact@v3
-      with:
-        name: OpenWrt_firmware
-        path: openwrt/bin/targets/
-
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
-        path: openwrt/bin/targets/
+        path: openwrt/artifact/buildinfo/
