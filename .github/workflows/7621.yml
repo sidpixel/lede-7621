@@ -60,7 +60,9 @@ jobs:
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
+        mv $CONFIG_FILE ./openwrt/config
         chmod +x $DIY_P1_SH $DIY_P2_SH
+        
         #echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
         #echo 'src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall.git;packages' >>feeds.conf.default
         #echo 'src-git passwall_luci https://github.com/xiaorouji/openwrt-passwall.git;luci' >>feeds.conf.default
@@ -76,7 +78,6 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/$DIY_P1_SH
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        mv ../$CONFIG_FILE .config
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
