@@ -31,7 +31,7 @@ env:
   OS_ARCH: X86_32
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  FORCE_UNSAFE_CONFIGURE: 1
+  #FORCE_UNSAFE_CONFIGURE: 1
 
 
 jobs:
