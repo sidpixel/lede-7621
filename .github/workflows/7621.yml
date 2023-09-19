@@ -60,38 +60,30 @@ jobs:
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
+        chmod +x $DIY_P1_SH $DIY_P2_SH
+
+
 
     - name: Load custom feeds
+      working-directory: ./openwrt
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
-        cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
-
-    - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
-
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
-
-    - name: Load custom configuration
-      run: |
-        mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
+        mv ../$CONFIG_FILE .config
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
 
     - name: Download package
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         make defconfig
         make download -j$(nproc)
 
         
     
     - name: Compile the firmware
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         echo -e "$(nproc) thread compile"
         make -j$(nproc) V=s
 
