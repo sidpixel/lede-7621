@@ -60,7 +60,7 @@ jobs:
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
-        mv $CONFIG_FILE ./openwrt/config
+        mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P1_SH $DIY_P2_SH
         
         #echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
