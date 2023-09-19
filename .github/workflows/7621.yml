@@ -61,6 +61,14 @@ jobs:
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
         chmod +x $DIY_P1_SH $DIY_P2_SH
+        sed -i '11s/#//' feeds.conf.default
+        #echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
+        #echo 'src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall.git;packages' >>feeds.conf.default
+        #echo 'src-git passwall_luci https://github.com/xiaorouji/openwrt-passwall.git;luci' >>feeds.conf.default
+        #echo  ' src-git lienol https://github.com/Lienol/openwrt-package' >>feeds.conf.default
+        #echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
+        #echo 'src-git small https://github.com/kenzok8/small' >>feeds.conf.default
+
 
 
 
