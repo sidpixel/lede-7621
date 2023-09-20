@@ -97,9 +97,9 @@ jobs:
       run: |
         mkdir -p openwrt/artifact/package
         mkdir -p openwrt/artifact/buildinfo
-        rm -rf $(find openwrt/bin/target/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/package/ -type f -name "*.ipk") openwrt/artifact/package/
-        cp -rf $(find openwrt/bin/target/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
+        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
+        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
 
     - name: Upload buildinfo
       uses: actions/upload-artifact@v3
