@@ -91,21 +91,28 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: Organize files
+    - name: Prepare artifact
       run: |
-        cd openwrt/bin/targets/*/*
-        rm -rf packages
+        mkdir -p openwrt/artifact/package
+        mkdir -p openwrt/artifact/buildinfo
+        rm -rf $(find openwrt/bin/target/ -type d -name "packages")
+        cp -rf $(find openwrt/bin/package/ -type f -name "*.ipk") openwrt/artifact/package/
+        cp -rf $(find openwrt/bin/target/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
 
-    - name: Upload firmware directory
-      uses: actions/upload-artifact@master
+    - name: Upload buildinfo
+      uses: actions/upload-artifact@v3
       with:
-        name: openwrt-firmware
-        path: openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
-        
+        name: OpenWrt_buildinfo
+        path: openwrt/artifact/buildinfo/
+
+    - name: Upload package
+      uses: actions/upload-artifact@v3
+      with:
+        name: OpenWrt_package
+        path: openwrt/artifact/package/
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
-        files: |
-          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
-          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2.manifest
+        path: openwrt/artifact/buildinfo/
