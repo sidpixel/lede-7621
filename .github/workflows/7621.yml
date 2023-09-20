@@ -18,11 +18,11 @@ on:
       - '.github/workflows/7621.yml'
 
   schedule:
-    - cron: 1 1 15 */1 *
+    - cron: 21 1 15 */1 *
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  #REPO_URL: https://github.com/Lienol/openwrt
-  REPO_BRANCH: master
+  #REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/Lienol/openwrt
+  REPO_BRANCH: main
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 7621.config
   OS_ARCH: 7621
@@ -60,27 +60,16 @@ jobs:
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
-        
-        #echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
-        #echo 'src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall.git;packages' >>feeds.conf.default
-        #echo 'src-git passwall_luci https://github.com/xiaorouji/openwrt-passwall.git;luci' >>feeds.conf.default
-        #echo  ' src-git lienol https://github.com/Lienol/openwrt-package' >>feeds.conf.default
-        #echo 'src-git kenzo https://github.com/kenzok8/openwrt-packages' >>feeds.conf.default
-        #echo 'src-git small https://github.com/kenzok8/small' >>feeds.conf.default
-
-
-    - name: prepare the file
-      run: |
-        mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P1_SH $DIY_P2_SH
-        ls -alh
-        ls -alh openwrt
+
+
 
     - name: Load custom feeds
       working-directory: ./openwrt
       run: |
         $GITHUB_WORKSPACE/$DIY_P1_SH
         $GITHUB_WORKSPACE/$DIY_P2_SH
+        mv ../$CONFIG_FILE .config
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
@@ -120,4 +109,3 @@ jobs:
         files: |
           openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
           openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2.manifest
-
