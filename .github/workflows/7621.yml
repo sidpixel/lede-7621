@@ -26,7 +26,7 @@ env:
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 7621.config
   OS_ARCH: 7621
-  DIY_P1_SH: diy-part1.sh
+  #DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
 
 jobs:
@@ -60,16 +60,16 @@ jobs:
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
-        chmod +x $DIY_P1_SH $DIY_P2_SH
+        chmod +x  $DIY_P2_SH
 
 
 
     - name: Load custom feeds
       working-directory: ./openwrt
       run: |
-        $GITHUB_WORKSPACE/$DIY_P1_SH
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        mv ../$CONFIG_FILE .config
+        mv $GITHUB_WORKSPACE/$FEEDS_CONF feeds.conf.default
+        mv $GITHUB_WORKSPACE/$CONFIG_FILE .config
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
