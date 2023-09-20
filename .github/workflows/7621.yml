@@ -69,13 +69,13 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/$DIY_P2_SH
         mv $GITHUB_WORKSPACE/$FEEDS_CONF feeds.conf.default
-        mv $GITHUB_WORKSPACE/$CONFIG_FILE .config
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
     - name: Download package
       working-directory: ./openwrt
       run: |
+        mv $GITHUB_WORKSPACE/$CONFIG_FILE .config
         make defconfig
         make download -j$(nproc)
 
@@ -95,9 +95,9 @@ jobs:
       run: |
         mkdir -p openwrt/artifact/package
         mkdir -p openwrt/artifact/buildinfo
-        rm -rf $(find openwrt/bin/target/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/package/ -type f -name "*.ipk") openwrt/artifact/package/
-        cp -rf $(find openwrt/bin/target/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
+        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
+        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
 
     - name: Upload buildinfo
       uses: actions/upload-artifact@v3
