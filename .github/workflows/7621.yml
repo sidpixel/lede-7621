@@ -18,15 +18,15 @@ on:
       - '.github/workflows/7621.yml'
 
   schedule:
-    - cron: 23 1 15 */1 *
+    - cron: 21 1 15 */1 *
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  #REPO_URL: https://github.com/Lienol/openwrt
-  REPO_BRANCH: master
+  #REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/Lienol/openwrt
+  REPO_BRANCH: main
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 7621.config
   OS_ARCH: 7621
-  #DIY_P1_SH: diy-part1.sh
+  DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
 
 jobs:
@@ -60,22 +60,22 @@ jobs:
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
-        chmod +x  $DIY_P2_SH
+        chmod +x $DIY_P1_SH $DIY_P2_SH
 
 
 
     - name: Load custom feeds
       working-directory: ./openwrt
       run: |
+        $GITHUB_WORKSPACE/$DIY_P1_SH
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        mv $GITHUB_WORKSPACE/$FEEDS_CONF feeds.conf.default
+        mv ../$CONFIG_FILE .config
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
     - name: Download package
       working-directory: ./openwrt
       run: |
-        mv $GITHUB_WORKSPACE/$CONFIG_FILE .config
         make defconfig
         make download -j$(nproc)
 
@@ -91,28 +91,21 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: Prepare artifact
+    - name: Organize files
       run: |
-        mkdir -p openwrt/artifact/package
-        mkdir -p openwrt/artifact/buildinfo
-        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+        cd openwrt/bin/targets/*/*
+        rm -rf packages
 
-    - name: Upload buildinfo
-      uses: actions/upload-artifact@v3
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@master
       with:
-        name: OpenWrt_buildinfo
-        path: openwrt/artifact/buildinfo/
-
-    - name: Upload package
-      uses: actions/upload-artifact@v3
-      with:
-        name: OpenWrt_package
-        path: openwrt/artifact/package/
-
+        name: openwrt-firmware
+        path: openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
+        
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.OS_ARCH }}-${{ env.FILE_DATE }}
-        path: openwrt/artifact/buildinfo/
+        files: |
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2.manifest
