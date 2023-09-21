@@ -68,7 +68,7 @@ jobs:
     - name: Update feeds
       run: |
         cd openwrt
-        ./scripts/feeds claen
+        ./scripts/feeds clean
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
