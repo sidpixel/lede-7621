@@ -22,12 +22,12 @@ on:
     - cron: 21 2 1 */1 *
 
 env:
-  #REPO_URL: https://github.com/Lienol/openwrt
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
+  #REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/Lienol/openwrt
+  REPO_BRANCH: main
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 8664.config
-  OS_ARCH: X86_64
+  OS_ARCH: 8664
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
 
@@ -38,71 +38,69 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-        
-    - name: Space cleanup and Initialization environment
+
+    - name:  Space cleanup and Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-          sudo swapoff /mnt/swapfile
-          sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
-          docker rmi `docker images -q`
-          sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
-          sudo -E apt-mark hold grub-efi-amd64-signed
-          sudo -E apt update
-          sudo -E apt -y full-upgrade
-          sudo apt install -y tzdata ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential libfuse-dev  bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib   git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev   libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz   mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools   libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip   vim wget xmlto xxd zlib1g-dev
-          sudo -E systemctl daemon-reload
-          sudo -E apt -y autoremove --purge
-          sudo -E apt clean
-          sudo -E timedatectl set-timezone "Asia/Shanghai"
-
+        sudo swapoff /mnt/swapfile
+        sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
+        docker rmi `docker images -q`
+        sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
+        sudo -E apt-mark hold grub-efi-amd64-signed
+        sudo -E apt update
+        sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* snap*
+        sudo -E apt -y full-upgrade
+        sudo -E apt install build-essential clang flex bison g++ gawk gcc-multilib g++-multilib \
+        gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev \
+        file wget
+        sudo -E systemctl daemon-reload
+        sudo -E apt -y autoremove --purge
+        sudo -E apt clean
+        sudo -E timedatectl set-timezone "Asia/Shanghai"
     - name: Clone source code
       run: |
         df -hT $PWD
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
+        chmod +x $DIY_P1_SH $DIY_P2_SH
+
+
 
     - name: Load custom feeds
+      working-directory: ./openwrt
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
-        cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
-
-    - name: Update feeds
-      run: ./openwrt/scripts/feeds update -a
-
-    - name: Install feeds
-      run: ./openwrt/scripts/feeds install -a
-
-    - name: Load custom configuration
-      run: |
-        mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
+        mv ../$CONFIG_FILE .config
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
 
     - name: Download package
-      id: package
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         make defconfig
         make download -j$(nproc)
 
+        
+    
     - name: Compile the firmware
-      id: compile
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc)  V=s
+        make -j$(nproc) V=s
+
+    - name: Check space usage
+      if: (!cancelled())
+      run: df -hT
         
 
     - name: Prepare artifact
       run: |
         mkdir -p openwrt/artifact/package
         mkdir -p openwrt/artifact/buildinfo
-        rm -rf $(find openwrt/bin/target/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/package/ -type f -name "*.ipk") openwrt/artifact/package/
-        cp -rf $(find openwrt/bin/target/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
+        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
+        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") openwrt/artifact/package/
+        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") openwrt/artifact/buildinfo/
 
     - name: Upload package
       uses: actions/upload-artifact@v3
