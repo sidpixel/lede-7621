@@ -61,6 +61,7 @@ jobs:
     - name: Clone source code
       run: |
         df -hT $PWD
+        rm -rf openwrt
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
         chmod +x $DIY_P1_SH $DIY_P2_SH
 
@@ -71,7 +72,8 @@ jobs:
       run: |
         $GITHUB_WORKSPACE/$DIY_P1_SH
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        mv ../$CONFIG_FILE .config
+        cp ../$CONFIG_FILE .config
+        ./scripts/feeds clean
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
@@ -102,7 +104,11 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: openwrt-firmware
-        path: openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
+        path: |
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2-squashfs-sysupgrade.bin
+          openwrt/.config
+          openwrt/bin/targets/ramips/mt7621/openwrt-ramips-mt7621-d-team_newifi-d2.manifest
+          
         
     - name: Release
       uses: softprops/action-gh-release@v1
