@@ -34,7 +34,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
@@ -57,6 +57,7 @@ jobs:
     - name: Clone source code
       run: |
         df -hT $PWD
+        rm -rf openwrt
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
 
     - name: Load custom feeds
@@ -65,10 +66,11 @@ jobs:
         
 
     - name: Update feeds
-      run: ./openwrt/scripts/feeds update -a
-
-    - name: Install feeds
-      run: ./openwrt/scripts/feeds install -a
+      run: |
+        cd openwrt
+        ./scripts/feeds claen
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
 
     - name: Load custom configuration
       run: |
