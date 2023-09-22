@@ -86,4 +86,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.RELEASE_VERSION }}-${{ env.FILE_DATE }}
-        body_path: artifact/
+        files: artifact/*
