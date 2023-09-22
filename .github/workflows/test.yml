@@ -86,6 +86,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.RELEASE_VERSION }}-${{ env.FILE_DATE }}
-        files: artifact/*
-          #artifact/testcombined-efi.img.gz
-          #artifact/test.manifest
+        path: artifact/
