@@ -14,10 +14,7 @@ on:
     branches: 
       - master
     paths:
-      - '8632.config'
-      - 'ready.sh'
-      - 'feeds.conf.default'
-      - '.github/workflows/8632.yml'
+      - '.github/workflows/test.yml'
 
   schedule:
     - cron: 21 1 1 */1 *
