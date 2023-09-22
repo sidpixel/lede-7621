@@ -24,12 +24,13 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-22.03
-  FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: 8632.config
   OS_ARCH: X86_32
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
-  #FORCE_UNSAFE_CONFIGURE: 1
+  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_BRANCH: openwrt-22.03
+  RELEASE_VERSION: 22.03
+  FEEDS_CONF: feeds.conf.default
+  READY_SH: ready.sh
 
 
 jobs:
@@ -60,37 +61,31 @@ jobs:
         rm -rf openwrt
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
 
-    - name: Load custom feeds
-      run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        
 
-    - name: Update feeds
+    - name: Load custom feeds and Load custom configuration
+      working-directory: ./openwrt
       run: |
-        cd openwrt
-        ./scripts/feeds clean
+        mv $GITHUB_WORKSPACE/$FEEDS_CONF feeds.conf.default
+        mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
+        bash -x $GITHUB_WORKSPACE/$READY_SH
+        cat feeds.conf.default    
+
+    - name: load the  feeds
+      working-directory: ./openwrt
+      run: |
+        ./scripts/feeds clean 
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: Load custom configuration
-      run: |
-        mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
-
     - name: Download package
-      id: package
+      working-directory: ./openwrt
       run: |
-        cd openwrt
-        make defconfig
+        make defconfig -j$(nproc)
         make download -j$(nproc)
 
     - name: Compile the firmware
-      id: compile
+      working-directory: ./openwrt
       run: |
-        cd openwrt
-        echo -e "$(nproc) thread compile"
         #make -j$(nproc)  V=s
         make -j$(nproc)
 
