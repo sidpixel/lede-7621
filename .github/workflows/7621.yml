@@ -67,7 +67,6 @@ jobs:
       working-directory: ./openwrt
       run: |
         mv $GITHUB_WORKSPACE/$FEEDS_CONF feeds.conf.default
-        mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         bash -x $GITHUB_WORKSPACE/$READY_SH
         cat feeds.conf.default    
 
@@ -81,6 +80,7 @@ jobs:
     - name: Download package
       working-directory: ./openwrt
       run: |
+        mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         make defconfig -j$(nproc)
         make download -j$(nproc)
 
@@ -100,12 +100,10 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact/package
-        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") artifact/package/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt.*") artifact/
+        rm -rf $(find openwrt/bin/targets/*/*/ -type d -name "packages")
+        #cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") artifact/package/
+        cp -rf $(find openwrt/bin/targets/*/*/ -type f -name "*.buildinfo" -o -name "*.manifest" -o -name "*.openwrt.*") artifact/
         cd ./artifact/
-        ls -Ahl
-        tar -czf packages.tar.gz package  && rm -r package && exit 0
         gzip --best *
         ls -Ahl
 
