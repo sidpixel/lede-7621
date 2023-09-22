@@ -5,7 +5,7 @@
 # Author: sidpixel
 #=================================================
 
-name: 8632.yml
+name: test.yml
 
 on:
   release:
