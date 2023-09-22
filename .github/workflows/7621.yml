@@ -18,7 +18,7 @@ on:
       - '.github/workflows/7621.yml'
 
   schedule:
-    - cron: 31 1 15 */1 *
+    - cron: 31 11 5 */1 *
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-22.03
