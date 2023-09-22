@@ -113,10 +113,10 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: openwrt-firmware
-        path:  ./artifact/
+        path:  artifact/
 
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.FILE_DATE }}-${{ env.RELEASE_VERSION }}
-        files: /artifact/*
+        files: artifact/*
