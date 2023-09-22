@@ -14,10 +14,13 @@ on:
     branches: 
       - master
     paths:
-      - '.github/workflows/test.yml'
+      - '8632.config'
+      - 'ready.sh'
+      - 'feeds.conf.default'
+      - '.github/workflows/8632.yml'
 
   schedule:
-    - cron: 31 1 1 */1 *
+    - cron: 21 1 1 */1 *
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-22.03
@@ -39,26 +42,55 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
- 
+        sudo swapoff /mnt/swapfile
+        sudo -E rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android  /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
+        sudo -E docker rmi `docker images -q`
+        sudo -E apt-mark hold grub-efi-amd64-signed
+        sudo -E apt update
+        sudo -E apt  purge -y azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* snap*
+        sudo -E apt install -y build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget
+        sudo -E systemctl daemon-reload
+        sudo -E apt -y autoremove --purge
+        sudo -E apt clean
         sudo -E timedatectl set-timezone "Asia/Shanghai"
 
     - name: Clone source code
       run: |
         df -hT $PWD
-        mkdir -p openwrt/bin/targets/x86/generic/test
-        #git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: Load custom feeds and Load custom configuration
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        cat openwrt/feeds.conf.default
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE  openwrt/.config
         ls -Ahl openwrt/
         chmod +x $READY_SH
         bash -x $GITHUB_WORKSPACE/$READY_SH
 
+    - name: Update feeds
+      working-directory: ./openwrt
+      run: |
+        ls -Ahl
+        ./scripts/feeds clean 
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
 
+
+    - name: Download package
+      working-directory: ./openwrt
+      run: |
+        make defconfig
+        make download -j$(nproc)
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+        
     
+    - name: Compile the firmware
+      working-directory: ./openwrt
+      run: |
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) V=s
+
 
     - name: Check space usage
       if: (!cancelled())
@@ -68,9 +100,9 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact/
+        mv openwrt/bin/targets/*/*/*combined-efi.img* ./artifact/
+        mv openwrt/bin/targets/*/*/*.manifest ./artifact/
         cd ./artifact/
-        touch testcombined-efi.img test.manifest
-
         ls -Ahl
         gzip -d *.gz && exit 0
         gzip --best *
@@ -85,5 +117,5 @@ jobs:
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.RELEASE_VERSION }}-${{ env.FILE_DATE }}
-        files: artifact/*
+        tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.FILE_DATE }}-${{ env.RELEASE_VERSION }}
+        files: /artifact/*
