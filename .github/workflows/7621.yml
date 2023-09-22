@@ -25,7 +25,6 @@ env:
   RELEASE_VERSION: 22.03
   FEEDS_CONF: feeds.conf.default
   READY_SH: ready.sh
-
   CONFIG_FILE: 7621.config
   OS_ARCH: 7621
   FEEDS_CONF: feeds.conf.default
