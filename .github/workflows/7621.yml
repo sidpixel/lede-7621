@@ -111,9 +111,7 @@ jobs:
     - name: Organize files
       run: |
         rm -rf ./artifact/
-        mkdir -p ./artifact/package
-        rm -rf $(find openwrt/bin/targets/*/*/ -type d -name "packages")
-        #cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") artifact/package/
+        mkdir -p ./artifact
         cp -rf $(find openwrt/bin/targets/*/*/  -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt*") artifact/
         cd ./artifact/
         gzip --best *
