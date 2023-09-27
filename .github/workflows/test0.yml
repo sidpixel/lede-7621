@@ -71,7 +71,7 @@ jobs:
 
     - name: Organize files
       run: |     
-        grep "CONFIG_LINUX_"  openwrt/.config
+        grep "CONFIG_PACKAGE_luci-app-passwall"  openwrt/.config
         ls -Ahl
 
     - name: Delete workflow runs
