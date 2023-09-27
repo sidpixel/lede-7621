@@ -85,7 +85,7 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact
-        cp -rf $(find openwrt/bin/targets/*/*/ -name ".config" -o  -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt*") artifact/
+        cp -rf $(find openwrt/ -name ".config" -o  -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt*") artifact/
         cd ./artifact/
         gzip --best *
         ls -Ahl
