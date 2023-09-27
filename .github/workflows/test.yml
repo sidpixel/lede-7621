@@ -72,14 +72,9 @@ jobs:
       run: |
         mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         make defconfig -j$(nproc)
-        make download -j$(nproc)
 
     
-    - name: Compile the firmware
-      working-directory: ./openwrt
-      run: |
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) V=s
+  
           
 
     - name: Check space usage
