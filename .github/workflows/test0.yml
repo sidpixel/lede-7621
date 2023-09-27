@@ -74,6 +74,12 @@ jobs:
         grep "CONFIG_LINUX_"  openwrt/.config
         ls -Ahl
 
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 3
+        keep_minimum_runs: 6
+
 
 
  
