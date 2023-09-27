@@ -21,8 +21,9 @@ on:
     - cron: 21 2 1 */1 *
 
 env:
-  REPO_URL: https://github.com/Lienol/openwrt
-  REPO_BRANCH: 19.07
+  #REPO_URL: https://github.com/Lienol/openwrt
+  REPO_URL: https://github.com/openwrt/openwrt
+  REPO_BRANCH: openwrt-19.07
   CONFIG_FILE: 8632.config
   OS_ARCH: X86_32
   RELEASE_VERSION: 19.07
