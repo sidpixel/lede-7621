@@ -18,7 +18,7 @@ on:
       - '.github/workflows/test.yml'
 
   schedule:
-    - cron: 21 3 1 */1 *
+    - cron: 21 2 1 */1 *
 
 env:
   REPO_URL: https://github.com/Lienol/openwrt
