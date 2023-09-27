@@ -67,7 +67,7 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: Download package
+    - name: generate config file
       working-directory: ./openwrt
       run: |
         mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
