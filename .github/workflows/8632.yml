@@ -117,6 +117,12 @@ jobs:
         name: openwrt-firmware
         path:  artifact/
 
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 15
+        keep_minimum_runs: 15
+
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
