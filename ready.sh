@@ -9,16 +9,18 @@
 #============================================================
 
 # Modify default IP
-#sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
 
 # 拉取微信推送插件
 git clone https://github.com/zzsj0928/luci-app-pushbot package/luci-app-pushbot
 # 拉取oaf流控插件
 git clone https://github.com/destan19/OpenAppFilter.git package/OpenAppFilter
 #拉取passwall,openclash
-echo "src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git;main" >> "feeds.conf.default"
-echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall.git;main" >> "feeds.conf.default"
-echo "src-git openclash https://github.com/vernesong/OpenClash.git;master" >> "feeds.conf.default"
+##echo "src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall-packages.git;main" >> "feeds.conf.default"
+#echo "src-git passwall https://github.com/xiaorouji/openwrt-passwall.git;main" >> "feeds.conf.default"
+#echo "src-git openclash https://github.com/vernesong/OpenClash.git;master" >> "feeds.conf.default"
+sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
+sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
 
 
 #定义时间变量
