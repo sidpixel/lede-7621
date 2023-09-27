@@ -14,80 +14,73 @@ on:
     branches: 
       - master
     paths:
+      - '8632.config'
       - '.github/workflows/test.yml'
 
   schedule:
-    - cron: 21 1 1 */1 *
+    - cron: 21 3 1 */1 *
+
 env:
-  REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: openwrt-22.03
-  FEEDS_CONF: feeds.conf.default
+  REPO_URL: https://github.com/Lienol/openwrt
+  REPO_BRANCH: 19.07
   CONFIG_FILE: 8632.config
   OS_ARCH: X86_32
+  RELEASE_VERSION: 19.07
+  FEEDS_CONF: feeds.conf.default
   READY_SH: ready.sh
-  RELEASE_VERSION: 22.03
+
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Initialization environment and space clean
+    - name:  Space cleanup and Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo swapoff /mnt/swapfile
-        sudo -E rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android  /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
-        sudo -E docker rmi `docker images -q`
-        sudo -E apt-mark hold grub-efi-amd64-signed
-        sudo -E apt update
-        sudo -E apt  purge -y azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* snap*
-        sudo -E apt install -y build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget
-        sudo -E systemctl daemon-reload
-        sudo -E apt -y autoremove --purge
-        sudo -E apt clean
         sudo -E timedatectl set-timezone "Asia/Shanghai"
+
+
 
     - name: Clone source code
       run: |
         df -hT $PWD
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        rm -rf openwrt
+        git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
+
 
     - name: Load custom feeds and Load custom configuration
-      run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE  openwrt/.config
-        ls -Ahl openwrt/
-        chmod +x $READY_SH
-        bash -x $GITHUB_WORKSPACE/$READY_SH
-
-    - name: Update feeds
       working-directory: ./openwrt
       run: |
-        ls -Ahl
+        mv $GITHUB_WORKSPACE/$FEEDS_CONF  feeds.conf.default
+        bash -x $GITHUB_WORKSPACE/$READY_SH
+        cat feeds.conf.default    
+
+    - name: load the  feeds
+      working-directory: ./openwrt
+      run: |
         ./scripts/feeds clean 
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-
     - name: Download package
       working-directory: ./openwrt
       run: |
-        make defconfig
+        mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
+        make defconfig -j$(nproc)
         make download -j$(nproc)
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
-        
+
     
     - name: Compile the firmware
       working-directory: ./openwrt
       run: |
         echo -e "$(nproc) thread compile"
         make -j$(nproc) V=s
-
+          
 
     - name: Check space usage
       if: (!cancelled())
@@ -96,12 +89,9 @@ jobs:
     - name: Organize files
       run: |
         rm -rf ./artifact/
-        mkdir -p ./artifact/
-        mv openwrt/bin/targets/*/*/*combined-efi.img* ./artifact/
-        mv openwrt/bin/targets/*/*/*.manifest ./artifact/
+        mkdir -p ./artifact
+        cp -rf $(find openwrt/bin/targets/*/*/ -name ".config" -o  -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt*") artifact/
         cd ./artifact/
-        ls -Ahl
-        gzip -d *.gz && exit 0
         gzip --best *
         ls -Ahl
 
@@ -109,10 +99,17 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: openwrt-firmware
-        path:  ./artifact/
+        path:  artifact/
+
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 15
+        keep_minimum_runs: 15
 
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.FILE_DATE }}-${{ env.RELEASE_VERSION }}
-        files: /artifact/*
+        files: artifact/*
+
