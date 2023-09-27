@@ -85,7 +85,7 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact
-        cp -rf  openwrt/.config artifact/
+        cp -rf  openwrt/.config artifact/config8632
         cd ./artifact/
         gzip --best *
         ls -Ahl
