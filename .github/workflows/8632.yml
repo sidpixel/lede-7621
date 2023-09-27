@@ -97,6 +97,11 @@ jobs:
       run: |
         echo -e "$(nproc) thread compile"
         make -j$(nproc) V=s
+
+    - name: Compile the firmware with sigle core
+      working-directory: ./openwrt
+      run: |
+        make -j1
           
 
     - name: Check space usage
