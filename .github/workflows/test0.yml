@@ -33,15 +33,7 @@ jobs:
       run: |
         sudo apt-get list|grep "urllib2"
         sudo -E timedatectl set-timezone "Asia/Shanghai"
-    - name: Checkout
-      uses: actions/checkout@master
-
-    - name:  Space cleanup and Initialization environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo apt list|grep "urllib2"
-        sudo -E timedatectl set-timezone "Asia/Shanghai"
+  
 
 
 
