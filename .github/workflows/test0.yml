@@ -31,7 +31,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo apt-get list|grep "urllib2"
+        sudo apt-get list|grep "urllib"
         sudo -E timedatectl set-timezone "Asia/Shanghai"
   
 
