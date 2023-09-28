@@ -55,13 +55,7 @@ jobs:
         rm -rf openwrt
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
 
-
-    - name: Load custom feeds and Load custom configuration
-      working-directory: ./openwrt
-      run: |
-        mv $GITHUB_WORKSPACE/$FEEDS_CONF  feeds.conf.default
-        bash -x $GITHUB_WORKSPACE/$READY_SH
-        cat feeds.conf.default    
+  
 
     - name: load the  feeds
       working-directory: ./openwrt
@@ -73,31 +67,19 @@ jobs:
     - name: Download package
       working-directory: ./openwrt
       run: |
-        mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         make defconfig -j$(nproc)
-        make download -j$(nproc)
 
     
-    - name: Compile the firmware
-      working-directory: ./openwrt
-      run: |
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) V=s
-
-          
-
-    - name: Check space usage
-      if: (!cancelled())
-      run: df -hT
 
     - name: Organize files
       run: |
-        rm -rf ./artifact/
-        mkdir -p ./artifact
-        cp -rf $(find openwrt/bin/targets/*/*/  -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt*") artifact/
-        cd ./artifact/
-        gzip --best *
-        ls -Ahl
+        cp openwrt/.config  config8632defult
+
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@master
+      with:
+        name: openwrt-firmware
+        path:  ./config8632defult
 
 
 
