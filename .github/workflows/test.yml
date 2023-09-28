@@ -67,6 +67,7 @@ jobs:
     - name: Download package
       working-directory: ./openwrt
       run: |
+        mv ../test.config  .config
         make defconfig -j$(nproc)
 
     
