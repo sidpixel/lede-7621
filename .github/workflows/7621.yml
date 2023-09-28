@@ -66,12 +66,12 @@ jobs:
         df -hT $PWD
         rm -rf openwrt
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
+        echo "FILE_DATE=$(date +%Y%m%d%H%M)" >>"$GITHUB_ENV"
 
 
     - name: Load custom feeds and Load custom configuration
       working-directory: ./openwrt
       run: |
-        #bash -x $GITHUB_WORKSPACE/$READY_SH
         sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
         sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
         cat feeds.conf.default    
@@ -86,6 +86,7 @@ jobs:
     - name: Download package
       working-directory: ./openwrt
       run: |
+        sed -i 's/192.168.1.1/10.1.1.1/g' package/base-files/files/bin/config_generate
         mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         make defconfig -j$(nproc)
         make download -j$(nproc)
