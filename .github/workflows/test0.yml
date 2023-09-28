@@ -31,7 +31,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo apt-get list|grep "ansible"
+        sudo apt list|grep "ansible"
         sudo -E timedatectl set-timezone "Asia/Shanghai"
   
 
