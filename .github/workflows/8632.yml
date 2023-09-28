@@ -20,19 +20,22 @@ on:
   schedule:
     - cron: 21 2 1 */1 *
 
+
 env:
   REPO_URL: https://github.com/Lienol/openwrt
   REPO_BRANCH: 19.07
-  CONFIG_FILE: 8632.config
-  OS_ARCH: X86_32
+  #REPO_URL: https://github.com/openwrt/openwrt
+  #REPO_BRANCH: openwrt-22.03
   RELEASE_VERSION: 19.07
   FEEDS_CONF: feeds.conf.default
   READY_SH: ready.sh
-
+  CONFIG_FILE: 8632.config
+  OS_ARCH: 8632
+ 
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
@@ -42,23 +45,20 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo swapoff /mnt/swapfile
-        sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
-        docker rmi `docker images -q`
-        sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
-        sudo -E apt-mark hold grub-efi-amd64-signed
+        #sudo swapoff /mnt/swapfile
+        #sudo rm -rf /imagegeneration /opt /mnt/swapfile /usr/local/aws* /usr/local/julia* /usr/share/swift* /usr/share/sbt* /usr/local/share/chromium* /usr/local/share/powershell* 
+        #docker rmi `docker images -q`
+        #sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
+        #sudo -E apt-mark hold grub-efi-amd64-signed
         sudo -E apt update
-        sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* snap*
-        sudo -E apt -y full-upgrade
-        
-        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
-        #22.04 latest depends
-        #sudo -E apt install build-essential clang flex bison g++ gawk gcc-multilib g++-multilib \
-        #gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev \
-        #file wget 
+        #sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* snap*
+        #sudo -E apt -y full-upgrade
+        sudo -E apt install build-essential clang flex bison g++ gawk gcc-multilib g++-multilib \
+        gettext git libncurses-dev libssl-dev python3-distutils rsync unzip zlib1g-dev \
+        file wget
         sudo -E systemctl daemon-reload
-        sudo -E apt -y autoremove --purge
-        sudo -E apt clean
+        #sudo -E apt -y autoremove --purge
+        #sudo -E apt clean
         sudo -E timedatectl set-timezone "Asia/Shanghai"
 
 
@@ -68,13 +68,14 @@ jobs:
         df -hT $PWD
         rm -rf openwrt
         git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
+        echo "FILE_DATE=$(date +%Y%m%d%H%M)" >>"$GITHUB_ENV"
 
 
     - name: Load custom feeds and Load custom configuration
       working-directory: ./openwrt
       run: |
-        mv $GITHUB_WORKSPACE/$FEEDS_CONF  feeds.conf.default
-        bash -x $GITHUB_WORKSPACE/$READY_SH
+        sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
+        sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
         cat feeds.conf.default    
 
     - name: load the  feeds
@@ -87,6 +88,7 @@ jobs:
     - name: Download package
       working-directory: ./openwrt
       run: |
+        sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
         mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         make defconfig -j$(nproc)
         make download -j$(nproc)
@@ -97,7 +99,6 @@ jobs:
       run: |
         echo -e "$(nproc) thread compile"
         make -j$(nproc) V=s
-
           
 
     - name: Check space usage
@@ -119,15 +120,9 @@ jobs:
         name: openwrt-firmware
         path:  artifact/
 
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@main
-      with:
-        retain_days: 15
-        keep_minimum_runs: 15
-
     - name: Create release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: OpenWRT-${{ env.OS_ARCH }}-${{ env.FILE_DATE }}-${{ env.RELEASE_VERSION }}
+        tag_name: LEDE-${{ env.OS_ARCH }}-${{ env.FILE_DATE }}-${{ env.RELEASE_VERSION }}
         files: artifact/*
 

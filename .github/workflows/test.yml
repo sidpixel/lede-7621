@@ -5,7 +5,7 @@
 # Author: sidpixel
 #=================================================
 
-name: test.yml
+name: 8632.yml
 
 on:
   release:
@@ -15,15 +15,14 @@ on:
       - master
     paths:
       - '8632.config'
-      - '.github/workflows/test.yml'
+      - '.github/workflows/8632.yml'
 
   schedule:
     - cron: 21 2 1 */1 *
 
 env:
-  #REPO_URL: https://github.com/Lienol/openwrt
-  REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: openwrt-19.07
+  REPO_URL: https://github.com/Lienol/openwrt
+  REPO_BRANCH: 19.07
   CONFIG_FILE: 8632.config
   OS_ARCH: X86_32
   RELEASE_VERSION: 19.07
@@ -43,6 +42,10 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        
+        
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
+       
         sudo -E timedatectl set-timezone "Asia/Shanghai"
 
 
@@ -68,14 +71,20 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: generate config file
+    - name: Download package
       working-directory: ./openwrt
       run: |
         mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
         make defconfig -j$(nproc)
+        make download -j$(nproc)
 
     
-  
+    - name: Compile the firmware
+      working-directory: ./openwrt
+      run: |
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) V=s
+
           
 
     - name: Check space usage
@@ -86,27 +95,10 @@ jobs:
       run: |
         rm -rf ./artifact/
         mkdir -p ./artifact
-        cp -rf  openwrt/.config artifact/config8632
+        cp -rf $(find openwrt/bin/targets/*/*/  -name "*.buildinfo" -o -name "*.manifest" -o -name "openwrt*") artifact/
         cd ./artifact/
-        
+        gzip --best *
         ls -Ahl
 
-    - name: Upload firmware directory
-      uses: actions/upload-artifact@master
-      with:
-        name: openwrt-firmware
-        path:  artifact/
 
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@main
-      with:
-        retain_days: 15
-        repository: ${{ github.repository }}
-        keep_minimum_runs: 6
-
-    - name: Create release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: test-${{ env.OS_ARCH }}-${{ env.FILE_DATE }}-${{ env.RELEASE_VERSION }}
-        files: artifact/*
 
