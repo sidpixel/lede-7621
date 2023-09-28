@@ -42,42 +42,10 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        apt list|grep urllib2
         sudo -E timedatectl set-timezone "Asia/Shanghai"
 
 
-
-    - name: Clone source code
-      run: |
-        df -hT $PWD
-        rm -rf openwrt
-        git clone --single-branch  -b $REPO_BRANCH  $REPO_URL openwrt
-
-
-
-    - name: generate config file
-      working-directory: ./openwrt
-      run: |
-        mv $GITHUB_WORKSPACE/$CONFIG_FILE  .config
-        make defconfig -j$(nproc)
-
-    
-  
-          
-
-    - name: Check space usage
-      if: (!cancelled())
-      run: df -hT
-
-    - name: Organize files
-      run: |     
-        grep "passwall"  openwrt/.config
-        ls -Ahl
-
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@main
-      with:
-        retain_days: 2
-        keep_minimum_runs: 3
 
 
 
