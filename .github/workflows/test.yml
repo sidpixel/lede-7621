@@ -5,7 +5,7 @@
 # Author: sidpixel
 #=================================================
 
-name: 8632.yml
+name: test.yml
 
 on:
   release:
@@ -14,8 +14,7 @@ on:
     branches: 
       - master
     paths:
-      - '8632.config'
-      - '.github/workflows/8632.yml'
+      - '.github/workflows/test.yml'
 
   schedule:
     - cron: 21 2 1 */1 *

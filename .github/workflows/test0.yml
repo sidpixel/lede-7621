@@ -14,7 +14,6 @@ on:
     branches: 
       - master
     paths:
-      - '8632.config'
       - '.github/workflows/test0.yml'
 
   schedule:
